@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CloudSqlDemoApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CloudSqlDemoApplication.class, args);
+	public static void main(String[] args) throws Exception {
+		System.exit(SpringApplication.exit(SpringApplication.run(CloudSqlDemoApplication.class, args)));
 	}
 
 }

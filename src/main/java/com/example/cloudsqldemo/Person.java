@@ -50,11 +50,10 @@ public class Person {
     public void setYear(int year) {
         this.year = year;
     }
-
   
     @Override
     public String toString() {
-      return "firstName: " + firstName + ", lastName: " + lastName;
+      return "firstName: " + firstName + ", year: " + year;
     }
   
   }

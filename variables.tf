@@ -22,8 +22,8 @@ variable "project_id" {
 
 variable "authorized_networks" {
   default = [{
-    name  = "sample-gcp-health-checkers-range"
-    value = "130.211.0.0/28"
+    name  = "All Hosts"
+    value = "0.0.0.0/0"
   }]
   type        = list(map(string))
   description = "List of mapped public networks authorized to access to the instances. Default - short range of GCP health-checkers IPs"

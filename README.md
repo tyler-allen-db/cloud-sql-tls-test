@@ -6,7 +6,8 @@ Testing using TLS 1.2 to encrypt in transit database connection.
 Before running tests infra must first be provisioned using terrafrom. Once Cloud SQL has been configured you can run the tests with the following
 
 ```bash
-
+mvn clean package
+java -jar target/cloud-sql-demo-0.0.1-SNAPSHOT.jar
 ```
 
 ## Provision Infrastructure
@@ -38,4 +39,15 @@ Now that the account has been configured we can run terrafrom to create the clus
 ```bash
 terraform init
 terraform apply
+```
+
+### Update Application.yml
+You must generate an application.yml file, this should contain the login details for the new cloudsql instance. The location of this file should be: src/main/resources/application.yml and content should be
+
+```yml
+spring:  
+  datasource:  
+    url: "jdbc:postgresql://< your IP address >:5432/test"  
+    username: < your username >
+    password: < your password >
 ```

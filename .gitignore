@@ -26,3 +26,8 @@ hs_err_pid*
 key.json
 *.tfstate
 *.tfstate.backup
+
+.classpath
+.settings
+.project
+target/

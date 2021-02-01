@@ -31,3 +31,5 @@ key.json
 .settings
 .project
 target/
+
+application.yml

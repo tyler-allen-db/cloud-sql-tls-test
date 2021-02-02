@@ -4,6 +4,10 @@ Testing using TLS 1.2 to encrypt in transit database connection.
 
 This application will connect to a PostgreSQL database and import the top 1000 names in the USA from 2019
 
+# Results, without SSL Enabled:
+
+![ssl-disabled](./docs/ssl-disabled.png)
+
 # Instructions
 Before running tests infra must first be provisioned using terrafrom. Once Cloud SQL has been configured you should connect to the console and run the following SQL:
 
@@ -37,7 +41,7 @@ gcloud services enable sqladmin.googleapis.com
 ### Create Service account for terraform
 You will need a service account and key in order to run terraform commands, follow the steps to create a service account, download its key and update the `GOOGLE_APPLICATION_CREDENTIALS` env var:
 
-``````bash
+```bash
 export SERVICE_ACCOUNT_ID=cloudsql-terraform
 gcloud iam service-accounts create $SERVICE_ACCOUNT_ID --display-name="CloudSQL Terraform"
 gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:$SERVICE_ACCOUNT_ID@$PROJECT_ID.iam.gserviceaccount.com" --role="roles/owner"
@@ -65,6 +69,15 @@ spring:
     username: < your username >
     password: < your password >
 ```
+
+### Download cert files into cert folder
+First generate a new client cert in the GCP console:
+
+![gen-cert](./docs/gen-cert.png)
+
+Next download the certs into a new `cert` folder in this directory
+
+![download-cert](./docs/download-cert.png)
 
 # Dataset
 OpenSource name dataset downloaded from [here](https://www.ssa.gov/OACT/babynames/limits.html)

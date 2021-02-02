@@ -33,3 +33,5 @@ key.json
 target/
 
 application.yml
+
+cert/

@@ -17,7 +17,7 @@ import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;;
+import org.springframework.core.io.ClassPathResource;
 
 @Configuration
 @EnableBatchProcessing
@@ -28,6 +28,11 @@ public class BatchConfiguration {
 
   @Autowired
   public StepBuilderFactory stepBuilderFactory;
+
+  @Bean
+  public JooqTestTask jooqTestTask() {
+      return new JooqTestTask();
+  }
 
   @Bean
   public FlatFileItemReader<Person> reader() {
@@ -52,22 +57,30 @@ public class BatchConfiguration {
   }
 
   @Bean
-  public Job importUserJob(JobCompletionNotificationListener listener, Step step1) {
+  public Job importUserJob(JobCompletionNotificationListener listener, Step writePsqlWithJDBC, Step testJooq) {
     return jobBuilderFactory.get("importUserJob")
       .incrementer(new RunIdIncrementer())
       .listener(listener)
-      .flow(step1)
-      .end()
+      .start(writePsqlWithJDBC)
+      .next(testJooq)
       .build();
   }
 
   @Bean
-  public Step step1(JdbcBatchItemWriter<Person> writer) {
-    return stepBuilderFactory.get("step1")
+  public Step writePsqlWithJDBC(JdbcBatchItemWriter<Person> writer) {
+    return stepBuilderFactory.get("writePsqlWithJDBC")
       .<Person, Person> chunk(10)
       .reader(reader())
       .writer(writer)
       .build();
   }
+
+  @Bean
+  public Step testJooq(){
+    return stepBuilderFactory.get("testJooq")
+    .tasklet(jooqTestTask())
+    .build();
+  }
+
 
 }

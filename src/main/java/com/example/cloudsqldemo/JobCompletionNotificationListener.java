@@ -42,7 +42,13 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
           rs.getInt(3))
       ).forEach(person -> log.info("Found <" + person + "> in the database."));
 
+      int personCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM people", Integer.class);
+      log.info("Found: " + personCount + " people. Expecting 1000");
+
+
       jdbcTemplate.execute("TRUNCATE TABLE people");
+
+      log.info("People table truncated!!!");
 
       // get job's start time
       Date start = jobExecution.getCreateTime();

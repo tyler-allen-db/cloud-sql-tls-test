@@ -2,8 +2,20 @@
 
 Testing using TLS 1.2 to encrypt in transit database connection.
 
+This application will connect to a PostgreSQL database and import the top 1000 names in the USA from 2019
+
 # Instructions
-Before running tests infra must first be provisioned using terrafrom. Once Cloud SQL has been configured you can run the tests with the following
+Before running tests infra must first be provisioned using terrafrom. Once Cloud SQL has been configured you should connect to the console and run the following SQL:
+
+```sql
+CREATE TABLE people  (
+    first_name VARCHAR(20) NOT NULL PRIMARY KEY,
+    sex VARCHAR(2),
+    qty integer
+);
+```
+
+Then to run the application run the following
 
 ```bash
 mvn clean package
@@ -46,6 +58,8 @@ You must generate an application.yml file, this should contain the login details
 
 ```yml
 spring:  
+  batch:
+    initialize-schema: always
   datasource:  
     url: "jdbc:postgresql://< your IP address >:5432/test"  
     username: < your username >

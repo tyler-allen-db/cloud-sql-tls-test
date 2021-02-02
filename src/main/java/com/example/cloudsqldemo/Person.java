@@ -5,17 +5,14 @@ public class Person {
     private String firstName;
     private String sex;
     private int qty;
-    private int year;
   
     public Person() {
     }
   
-    public Person(String firstName, String sex, int qty, int year) {
+    public Person(String firstName, String sex, int qty) {
       this.firstName = firstName;
       this.sex = sex;
       this.qty = qty;
-      this.year = year;
-      
     }
 
 
@@ -42,18 +39,15 @@ public class Person {
     public void setQty(int qty) {
         this.qty = qty;
     }
-
-    public int getYear() {
-        return this.year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
   
+
     @Override
     public String toString() {
-      return "firstName: " + firstName + ", year: " + year;
+        return "{" +
+            " firstName='" + getFirstName() + "'" +
+            ", sex='" + getSex() + "'" +
+            ", qty='" + getQty() + "'" +
+            "}";
     }
-  
+
   }

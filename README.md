@@ -1,15 +1,17 @@
 # cloud-sql-tls-test
 Testing using TLS 1.2 to encrypt in transit database connection.
 
-This application will connect to a PostgreSQL database and import the top 1000 names in the USA from 2019
+This application takes advantage of SrpingBatch and contains a two step job. The first step `writePsqlWithJDBC` will use JDBC to connect to a PostgreSQL database and import the top 1000 names in the USA from 2019. The second step `testJooq` will use the [JOOQ](https://www.jooq.org/) library to add 5 additional names to the same PostgreSQL table via a SQL query. 
 
-# Results, without SSL Enabled:
+# Results
+
+## JDBC Results, without SSL Enabled:
 ![ssl-disabled](./docs/ssl-disabled.png)
 
-# Results, with SSL enabled:
+## JDBC Results, with SSL enabled:
 ![ssl-enabled](./docs/ssl-enabled.png)
 
-# Ensure TLS is enabled and check version
+## Ensure TLS is enabled and check version
 You can ensure TLS is enabled and check which TLS version is being used for active connections with the `PSQL` command `SELECT * FROM pg_stat_ssl;`
 ![pg_stat](./docs/pg_stat.png)
 

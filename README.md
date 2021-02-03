@@ -3,7 +3,16 @@ Testing using TLS 1.2 to encrypt in transit database connection.
 
 This application takes advantage of SrpingBatch and contains a two step job. The first step `writePsqlWithJDBC` will use JDBC to connect to a PostgreSQL database and import the top 1000 names in the USA from 2019. The second step `testJooq` will use the [JOOQ](https://www.jooq.org/) library to add 5 additional names to the same PostgreSQL table via a SQL query. 
 
+### [Cloud SQL and SSL/TLS](https://cloud.google.com/sql/docs/mysql/authorize-ssl)
+Cloud SQL supports connecting to an instance using the Transport Layer Security (SSL/TLS) protocol. Data in transit inside a physical boundary controlled by or on behalf of Google is generally authenticated but might not be encrypted by default. If you connect to an instance using its public IP address, use SSL/TLS certificates, so the data is secure during transmission. SSL/TLS is the standard protocol for encryption of data sent over the internet. If your data isn't encrypted, anyone can examine your packets and read confidential information.
+
+A server Certificate Authority (CA) certificate is required in SSL connections. Cloud SQL creates a server certificate automatically when you create your instance. As long as the server certificate is valid, you do not need to actively [manage your server certificate](https://cloud.google.com/sql/docs/mysql/manage-ssl-instance#manage-server-certs). However, the certificate has an expiration date of 10 years; after that date, it is no longer valid, and clients are not able to establish a secure connection to your instance using that certificate. You can also [manually create a new one](https://cloud.google.com/sql/docs/mysql/configure-ssl-instance#server-certs).
+
+You [create client certificates yourself](https://cloud.google.com/sql/docs/mysql/configure-ssl-instance#client-certs). There is a limit of 10 client certificates per Cloud SQL instance.
+
 # Results
+
+After testing GCP CloudSQL PostgreSQL from JDBC and JOOQ we can see in the below network captures that both methods use TLS 1.3 by default. I recommend enforcing SSL for Cloud SQL to guarantee that all connections use SSL/TLS.
 
 ## JDBC Results, without SSL Enabled:
 ![ssl-disabled](./docs/ssl-disabled.png)
@@ -11,27 +20,18 @@ This application takes advantage of SrpingBatch and contains a two step job. The
 ## JDBC Results, with SSL enabled:
 ![ssl-enabled](./docs/ssl-enabled.png)
 
+## JOOQ Reuslts, without SSL enabled:
+![jooq-ssl-disabled](./docs/jooq-ssl-disabled.png)
+
+## JOOQ Reuslts, with SSL enabled:
+![jooq-ssl-enabled](./docs/jooq-ssl-enabled.png)
+
 ## Ensure TLS is enabled and check version
 You can ensure TLS is enabled and check which TLS version is being used for active connections with the `PSQL` command `SELECT * FROM pg_stat_ssl;`
 ![pg_stat](./docs/pg_stat.png)
 
 # Instructions
-Before running tests infra must first be provisioned using terrafrom. Once Cloud SQL has been configured you should connect to the console and run the following SQL:
-
-```sql
-CREATE TABLE people  (
-    first_name VARCHAR(20) NOT NULL PRIMARY KEY,
-    sex VARCHAR(2),
-    qty integer
-);
-```
-
-Then to run the application run the following
-
-```bash
-mvn clean package
-java -jar target/cloud-sql-demo-0.0.1-SNAPSHOT.jar
-```
+Before running tests infra must first be provisioned using terrafrom.
 
 ## Provision Infrastructure
 
@@ -103,6 +103,25 @@ Finally update the permissions to `u=rw` and convert the key to a `DER (binary)`
 openssl pkcs8 -topk8 -inform PEM -outform DER -in cert/client-key.pem -out cert/client-key.pk8 -nocrypt
 chmod 600 cert/*
 ```
+
+# Running Application
+Once Cloud SQL has been configured you should connect to the console and run the following SQL:
+
+```sql
+CREATE TABLE people  (
+    first_name VARCHAR(20) NOT NULL PRIMARY KEY,
+    sex VARCHAR(2),
+    qty integer
+);
+```
+
+Then to run the application run the following
+
+```bash
+mvn clean package
+java -jar target/cloud-sql-demo-0.0.1-SNAPSHOT.jar
+```
+
 
 ---
 
